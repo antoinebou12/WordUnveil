@@ -1,0 +1,63 @@
+version: "3.9"
+services:
+  mariadb:
+    image: mariadb:10.7
+    container_name: mariadb
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: WordEnigma
+      MYSQL_USER: mariadb
+      MYSQL_PASSWORD: mariadb
+    volumes:
+      - ./data/mariadb:/var/lib/mysql
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+  web:
+    build:
+      context: .
+      dockerfile: ./web/Dockerfile
+    ports:
+      - "8910:8910"
+    volumes:
+      - ~/apps/web:/app
+    environment:
+      - DATABASE_URL=mysql://mariadb:mariadb@localhost:3306/WordEnigma
+      - PRISMA_HIDE_UPDATE_MESSAGE=true
+      - SESSION_SECRET=pd8RNxZJ9foEvWTAjJo5V34YrHQidsTb3HDZ62zbiJpQ8J6vV2rVWyCnYgBY3ouj
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl", "-f", "http://localhost:8910/"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+  api:
+    build:
+      context: .
+      dockerfile: ./api/Dockerfile
+    ports:
+      - "8911:8911"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    volumes:
+      - ~/apps/api:/app
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl", "--request", "POST", "--header", "content-type: application/json", "--url", "http://localhost:8911/api/graphql", "--data", '{"query":"{ redwood { version } }"}']
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
+
