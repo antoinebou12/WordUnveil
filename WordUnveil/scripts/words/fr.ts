@@ -1,13 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import { Logger } from 'pino';
-import getDefinition from './dictionnaryCrawler';
 import { WordsFR } from '../data/fr';
 
 const languageCode = 'fr';
 
 export async function addWords(db: PrismaClient, logger: Logger) {
-    for (const word of WordsFR) {
-        await db.word.upsert({
+    const promises = WordsFR.map((word) =>
+        db.word.upsert({
             where: {
                 word: word,
             },
@@ -31,19 +30,8 @@ export async function addWords(db: PrismaClient, logger: Logger) {
                 }
             }
         })
-        logger.debug(`Added word ${word}`)
-        // const defintion = await getDefinition(languageCode, word)
-        // if (defintion) {
-        //     db.word.update({
-        //         where: {
-        //             word: word,
-        //         },
-        //         data: {
-        //             definition: defintion.definition,
-        //             source: defintion.source,
-        //         }
-        //     })
-        //     logger.debug(`Updated word ${word}`)
-        // }
-    }
+        .then(() => logger.debug(`Added word ${word}`))
+        .catch((error) => logger.error(`Failed to add word ${word}`, error))
+    );
+    await Promise.all(promises);
 }

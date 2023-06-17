@@ -1,5 +1,6 @@
 version: '3.8'
 services:
+  # Service for Uptime Kuma - a fancy self-hosted monitoring tool
   statuspage:
     image: 'louislam/uptime-kuma:1'
     container_name: uptime
@@ -8,6 +9,8 @@ services:
       - '3001:3001'
     volumes:
       - uptime-kuma:/app/data
+
+  # Service for Umami - a simple, easy-to-use, self-hosted web analytics solution
   analystics:
     image: ghcr.io/umami-software/umami:postgresql-latest
     ports:
@@ -19,6 +22,8 @@ services:
     depends_on:
       - analystics-db
     restart: always
+
+  # PostgreSQL database for Umami
   analystics-db:
     image: postgres:12-alpine
     environment:
@@ -32,6 +37,27 @@ services:
       - umami-db-data:/var/lib/postgresql/data
     restart: always
 
+  # Service for Prometheus - an open-source systems monitoring and alerting toolkit
+  prometheus:
+    image: prom/prometheus:v2.29.1
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    restart: always
+
+  # Service for Grafana - a multi-platform open-source analytics and interactive visualization web application
+  grafana:
+    image: grafana/grafana:8.1.5
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    ports:
+      - 3000:3000
+    restart: always
+
 volumes:
   umami-db-data:
   uptime-kuma:
+  grafana-storage:

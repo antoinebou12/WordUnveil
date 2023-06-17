@@ -1,123 +1,124 @@
 import type { Prisma } from '@prisma/client'
+import faker from 'faker'
+
+type UserArgs = {
+  username: string
+  email: string
+  languageCode: string
+}
+
+type WordArgs = {
+  word: string
+  size: number
+  languageCode: string
+}
+
+type WordsBankArgs = {
+  name: string
+  languageCode: string
+}
+
+// Helper function to generate a user with associated settings and language
+const createUser = ({ username, email, languageCode }: UserArgs) => ({
+  create: {
+    username,
+    email,
+    hashedPassword: faker.random.alphaNumeric(10),
+    salt: faker.random.alphaNumeric(10),
+    updatedAt: new Date().toISOString(),
+    userSetting: {
+      create: {
+        updatedAt: new Date().toISOString(),
+        Language: {
+          create: {
+            name: 'String',
+            code: languageCode,
+            updatedAt: new Date().toISOString(),
+          },
+        },
+      },
+    },
+  },
+})
+
+// Helper function to generate a word with associated language
+const createWord = ({ word, size, languageCode }: WordArgs) => ({
+  create: {
+    word,
+    size,
+    source: faker.random.word(),
+    updatedAt: new Date().toISOString(),
+    Language: {
+      create: {
+        name: 'String',
+        code: languageCode,
+        updatedAt: new Date().toISOString(),
+      },
+    },
+  },
+})
+
+// Helper function to generate a wordsBank with associated language
+const createWordsBank = ({ name, languageCode }: WordsBankArgs) => ({
+  create: {
+    name,
+    updatedAt: new Date().toISOString(),
+    Language: {
+      create: {
+        name: 'String',
+        code: languageCode,
+        updatedAt: new Date().toISOString(),
+      },
+    },
+  },
+})
 
 export const standard = defineScenario<Prisma.GameCreateArgs>({
   game: {
     one: {
       data: {
-        name: 'String',
-        startedAt: '2022-07-05T23:41:17Z',
-        correct: true,
-        duration: 9295972,
-        updatedAt: '2022-07-05T23:41:17Z',
-        user: {
-          create: {
-            username: 'String6190276',
-            email: 'String8640090',
-            hashedPassword: 'String',
-            salt: 'String',
-            updatedAt: '2022-07-05T23:41:17Z',
-            userSetting: {
-              create: {
-                updatedAt: '2022-07-05T23:41:17Z',
-                Language: {
-                  create: {
-                    name: 'String',
-                    code: 'String3161265',
-                    updatedAt: '2022-07-05T23:41:17Z',
-                  },
-                },
-              },
-            },
-          },
-        },
-        word: {
-          create: {
-            word: 'String971036',
-            size: 5598352,
-            source: 'String',
-            updatedAt: '2022-07-05T23:41:17Z',
-            Language: {
-              create: {
-                name: 'String',
-                code: 'String1009969',
-                updatedAt: '2022-07-05T23:41:17Z',
-              },
-            },
-          },
-        },
-        wordsBank: {
-          create: {
-            name: 'String1629470',
-            updatedAt: '2022-07-05T23:41:17Z',
-            Language: {
-              create: {
-                name: 'String',
-                code: 'String4952152',
-                updatedAt: '2022-07-05T23:41:17Z',
-              },
-            },
-          },
-        },
+        name: faker.random.word(),
+        startedAt: new Date().toISOString(),
+        correct: faker.random.boolean(),
+        duration: faker.random.number({ min: 5000000, max: 10000000 }),
+        updatedAt: new Date().toISOString(),
+        user: createUser({
+          username: faker.internet.userName(),
+          email: faker.internet.email(),
+          languageCode: faker.random.alphaNumeric(7),
+        }),
+        word: createWord({
+          word: faker.random.word(),
+          size: faker.random.number({ min: 5000000, max: 10000000 }),
+          languageCode: faker.random.alphaNumeric(7),
+        }),
+        wordsBank: createWordsBank({
+          name: faker.random.word(),
+          languageCode: faker.random.alphaNumeric(7),
+        }),
       },
     },
     two: {
       data: {
-        name: 'String',
-        startedAt: '2022-07-05T23:41:17Z',
-        correct: true,
-        duration: 8986327,
-        updatedAt: '2022-07-05T23:41:17Z',
-        user: {
-          create: {
-            username: 'String4472067',
-            email: 'String1078383',
-            hashedPassword: 'String',
-            salt: 'String',
-            updatedAt: '2022-07-05T23:41:17Z',
-            userSetting: {
-              create: {
-                updatedAt: '2022-07-05T23:41:17Z',
-                Language: {
-                  create: {
-                    name: 'String',
-                    code: 'String6505038',
-                    updatedAt: '2022-07-05T23:41:17Z',
-                  },
-                },
-              },
-            },
-          },
+        name: faker.random.word(),
+        startedAt: new Date().toISOString(),
+        correct: faker.random.boolean(),
+        duration: faker.random.number({ min: 5000000, max: 10000000 }),
+        updatedAt: new Date().toISOString(),
+        user: createUser({
+          username: faker.internet.userName(),
+          email: faker.internet.email(),
+          languageCode: faker.random.alphaNumeric(7),
+        }),
+        word: createWord({
+          word: faker.random.word(),
+          size: faker.random.number({ min: 5000000, max: 10000000 }),
+          languageCode: faker.random.alphaNumeric(7),
+        }),
+        wordsBank: createWordsBank({
+          name: faker.random.word(),
+          languageCode: faker.random.alphaNumeric(7),
         },
-        word: {
-          create: {
-            word: 'String549318',
-            size: 7076743,
-            source: 'String',
-            updatedAt: '2022-07-05T23:41:17Z',
-            Language: {
-              create: {
-                name: 'String',
-                code: 'String5222058',
-                updatedAt: '2022-07-05T23:41:17Z',
-              },
-            },
-          },
-        },
-        wordsBank: {
-          create: {
-            name: 'String6849058',
-            updatedAt: '2022-07-05T23:41:17Z',
-            Language: {
-              create: {
-                name: 'String',
-                code: 'String3366233',
-                updatedAt: '2022-07-05T23:41:17Z',
-              },
-            },
-          },
-        },
-      },
-    },
   },
 })
 

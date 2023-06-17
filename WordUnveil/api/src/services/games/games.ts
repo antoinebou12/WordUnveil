@@ -21,18 +21,23 @@ export const createGame: MutationResolvers['createGame'] = ({ input }) => {
   })
 }
 
-export const updateGame: MutationResolvers['updateGame'] = ({ id, input }) => {
+export const updateGame: MutationResolvers['updateGame'] = async ({ id, input }) => {
+  const existingGame = await db.game.findUnique({ where: { id } })
+  if (!existingGame) throw new Error('Game not found')
   return db.game.update({
     data: input,
     where: { id },
   })
 }
 
-export const deleteGame: MutationResolvers['deleteGame'] = ({ id }) => {
+export const deleteGame: MutationResolvers['deleteGame'] = async ({ id }) => {
+  const existingGame = await db.game.findUnique({ where: { id } })
+  if (!existingGame) throw new Error('Game not found')
   return db.game.delete({
     where: { id },
   })
 }
+
 
 export const Game: GameResolvers = {
   user: (_obj, { root }) =>

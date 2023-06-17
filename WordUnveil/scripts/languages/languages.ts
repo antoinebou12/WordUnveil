@@ -1,21 +1,24 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import { Logger } from 'pino';
 
 export async function addLanguages(prisma: PrismaClient, logger: Logger) {
-    for (const language of Languages) {
-        await prisma.language.upsert(
-            {
-                where: {
-                    code: language.code,
-                },
-                update: {},
-                create: {
-                    id: language.id,
-                    name: language.name,
-                    code: language.code,
-                }
-            });
-        logger.debug({ data: language }, 'Added language')
+    const languageUpserts: Prisma.Prisma__LanguageClient<Prisma.LanguageUncheckedCreateInput>[] = Languages.map((language) => 
+        prisma.language.upsert({
+            where: { code: language.code },
+            update: {},
+            create: {
+                id: language.id,
+                name: language.name,
+                code: language.code,
+            },
+        })
+    );
+
+    try {
+        await prisma.$transaction(languageUpserts);
+        logger.info('Languages have been added successfully.');
+    } catch (error) {
+        logger.error('Error while adding languages: ', error);
     }
 }
 
@@ -40,7 +43,6 @@ export const Languages = [
         name: 'German',
         code: 'de',
     },
-
     {
         id: '5',
         name: 'Italian',
@@ -51,4 +53,4 @@ export const Languages = [
         name: 'Portuguese',
         code: 'pt',
     },
-]
+];

@@ -7,51 +7,50 @@ import {
 } from './wordBanks'
 import type { StandardScenario } from './wordBanks.scenarios'
 
-// Generated boilerplate tests do not account for all circumstances
-// and can fail without adjustments, e.g. Float and DateTime types.
-//           Please refer to the RedwoodJS Testing Docs:
-//       https://redwoodjs.com/docs/testing#testing-services
-// https://redwoodjs.com/docs/testing#jest-expect-type-considerations
-
 describe('wordBanks', () => {
   scenario('returns all wordBanks', async (scenario: StandardScenario) => {
     const result = await wordBanks()
 
     expect(result.length).toEqual(Object.keys(scenario.wordBank).length)
+    expect(result[0]).toHaveProperty('id')
+    expect(result[0]).toHaveProperty('name')
+    expect(result[0]).toHaveProperty('Language')
   })
 
   scenario('returns a single wordBank', async (scenario: StandardScenario) => {
-    const result = await wordBank({ id: scenario.wordBank.one.id })
+    const result = await wordBank({ id: scenario.wordBank.english.id })
 
-    expect(result).toEqual(scenario.wordBank.one)
+    expect(result).toEqual(scenario.wordBank.english)
   })
 
   scenario('creates a wordBank', async (scenario: StandardScenario) => {
-    const result = await createWordBank({
-      input: {
-        name: 'String1536137',
-        languageId: scenario.wordBank.two.languageId,
-        updatedAt: '2022-07-05T23:41:06Z',
-      },
-    })
+    const newWordBank = {
+      name: 'French Word Bank',
+      languageId: scenario.wordBank.spanish.languageId,
+      updatedAt: new Date().toISOString(),
+    }
 
-    expect(result.name).toEqual('String1536137')
-    expect(result.languageId).toEqual(scenario.wordBank.two.languageId)
-    expect(result.updatedAt).toEqual('2022-07-05T23:41:06Z')
+    const result = await createWordBank({ input: newWordBank })
+
+    expect(result.name).toEqual(newWordBank.name)
+    expect(result.languageId).toEqual(newWordBank.languageId)
+    expect(new Date(result.updatedAt)).toBeInstanceOf(Date)
   })
 
   scenario('updates a wordBank', async (scenario: StandardScenario) => {
-    const original = await wordBank({ id: scenario.wordBank.one.id })
+    const original = await wordBank({ id: scenario.wordBank.english.id })
+    const updatedName = 'Updated English Word Bank'
+
     const result = await updateWordBank({
       id: original.id,
-      input: { name: 'String98507602' },
+      input: { name: updatedName },
     })
 
-    expect(result.name).toEqual('String98507602')
+    expect(result.name).toEqual(updatedName)
   })
 
   scenario('deletes a wordBank', async (scenario: StandardScenario) => {
-    const original = await deleteWordBank({ id: scenario.wordBank.one.id })
+    const original = await deleteWordBank({ id: scenario.wordBank.english.id })
     const result = await wordBank({ id: original.id })
 
     expect(result).toEqual(null)

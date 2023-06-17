@@ -1,28 +1,62 @@
-# WordsEnigma
-Wordle in multi languague
+# WordsUnveil
+![License](https://img.shields.io/badge/license-MIT-green)
+![Redwood](https://img.shields.io/badge/-RedwoodJS-B7410E?logo=redwoodjs)
+![GraphQL](https://img.shields.io/badge/-GraphQL-E10098?logo=graphql)
+![Prisma](https://img.shields.io/badge/-Prisma-2D3748?logo=prisma)
+![MySQL](https://img.shields.io/badge/-MySQL-4479A1?logo=mysql)
 
-## Run in dev mode
-```bash 
-    cd WordsEnigma
-    yarn install
-    cp .env.default .env
-    yarn rw prisma migrate dev
-    yarn rw exec seed # optional
-    yarn rw dev
-```
+WordsEnigma is a multilingual twist on the popular game Wordle, providing a fun and educational way to learn new languages. Built with advanced technologies for efficiency and a seamless gaming experience.
 
-### Docker-Compose
+## Getting Started
+
+**Development Setup**
+WordsUnveil is a multilingual twist on the popular game Wordle, providing a fun and educational way to learn new languages. Built with advanced technologies for efficiency and a seamless gaming experience.
+
+## Getting Started
+
+**Development Setup**
+
 ```bash
-    docker-compose up -d
+# Navigate to the WordsUnveil directory
+cd WordsUnveil
+
+# Install dependencies
+yarn install
+
+# Copy default environment variables
+cp .env.default .env
+
+# Run database migrations
+yarn rw prisma migrate dev
+
+# (Optional) Seed the database
+yarn rw exec seed
+
+# Start the development server
+yarn rw dev
 ```
 
+**Docker-Compose Setup**
 
-## Create Postgres Database Docker
 ```bash
-    docker run --name=db -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin -p '5432:5432' -d postgres
+# Start services with Docker
+docker-compose up -d
 ```
 
-## Deployement Production
+**PostgreSQL Database Setup**
+
 ```bash
-    yarn rw deploy baremetal production --first-run
+# Create PostgreSQL container named `db`
+docker run --name=db -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin -p '5432:5432' -d postgres
 ```
+
+## Deployment
+
+Deploy the application to a bare metal server in production mode.
+
+```bash
+# Initial deployment
+yarn rw deploy baremetal production --first-run
+```
+
+For subsequent deployments, omit the `--first-run` flag.

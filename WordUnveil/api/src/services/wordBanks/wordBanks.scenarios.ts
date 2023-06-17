@@ -2,28 +2,28 @@ import type { Prisma } from '@prisma/client'
 
 export const standard = defineScenario<Prisma.WordBankCreateArgs>({
   wordBank: {
-    one: {
+    english: {
       data: {
-        name: 'String8498064',
-        updatedAt: '2022-07-05T23:41:06Z',
+        name: 'English Word Bank',
+        updatedAt: new Date().toISOString(),
         Language: {
           create: {
-            name: 'String',
-            code: 'String8180276',
-            updatedAt: '2022-07-05T23:41:06Z',
+            name: 'English',
+            code: 'en-US',
+            updatedAt: new Date().toISOString(),
           },
         },
       },
     },
-    two: {
+    spanish: {
       data: {
-        name: 'String7670115',
-        updatedAt: '2022-07-05T23:41:06Z',
+        name: 'Spanish Word Bank',
+        updatedAt: new Date().toISOString(),
         Language: {
           create: {
-            name: 'String',
-            code: 'String8263895',
-            updatedAt: '2022-07-05T23:41:06Z',
+            name: 'Spanish',
+            code: 'es-ES',
+            updatedAt: new Date().toISOString(),
           },
         },
       },

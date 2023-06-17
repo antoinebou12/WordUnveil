@@ -1,16 +1,16 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { Logger } from "pino";
+import CryptoJS from 'crypto-js';
 
-const CryptoJS = require('crypto-js')
-
-const languageId = '2';
-const languageCode = 'en'
+const hashPassword = (password, salt, keySize, iterations) => {
+    return CryptoJS.PBKDF2(password, salt, { keySize, iterations }).toString();
+}
 
 export async function addUsers(prisma: PrismaClient, logger: Logger) {
-    for (const user of Users) {
-        const salt = CryptoJS.lib.WordArray.random(128 / 8).toString()
-        const hashedPassword = CryptoJS.PBKDF2(user.password, salt, { keySize: 256 / 32 }).toString()
-        await prisma.user.upsert(
+    const userUpserts: Prisma.Prisma__UserClient<Prisma.UserUncheckedCreateInput>[] = Users.map((user) => {
+        const salt = CryptoJS.lib.WordArray.random(parseInt(process.env.SALT_LENGTH)).toString()
+        const hashedPassword = hashPassword(user.password, salt, parseInt(process.env.KEY_SIZE), parseInt(process.env.ITERATIONS))
+        return prisma.user.upsert(
             {
                 where: {
                     username: user.username,
@@ -28,16 +28,22 @@ export async function addUsers(prisma: PrismaClient, logger: Logger) {
                             Language: {
                                 connect: {
                                     code: "en",
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        logger.debug({ data: user }, "Added user")
+                                },
+                            },
+                        },
+                    },
+                },
+            }
+        );
+    });
+
+    try {
+        await prisma.$transaction(userUpserts);
+        logger.info('Users have been added successfully.');
+    } catch (error) {
+        logger.error('Error while adding users: ', error);
     }
 }
-
 
 export const Users = [
     {
@@ -45,13 +51,13 @@ export const Users = [
         name: "Admin",
         email: "admin@admin.com",
         password: "admin",
-        roles: "admin"
+        roles: "admin",
     },
     {
         username: "user",
         name: "User",
         email: "user@user.com",
         password: "user",
-        roles: "user"
-    }
-]
+        roles: "user",
+    },
+];

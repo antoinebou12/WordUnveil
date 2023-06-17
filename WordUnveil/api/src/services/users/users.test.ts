@@ -1,59 +1,54 @@
 import { users, user, createUser, updateUser, deleteUser } from './users'
 import type { StandardScenario } from './users.scenarios'
 
-// Generated boilerplate tests do not account for all circumstances
-// and can fail without adjustments, e.g. Float and DateTime types.
-//           Please refer to the RedwoodJS Testing Docs:
-//       https://redwoodjs.com/docs/testing#testing-services
-// https://redwoodjs.com/docs/testing#jest-expect-type-considerations
-
-describe('users', () => {
-  scenario('returns all users', async (scenario: StandardScenario) => {
-    const result = await users()
-
-    expect(result.length).toEqual(Object.keys(scenario.user).length)
+describe('User Service Tests', () => {
+  scenario('Returns all users', async (scenario: StandardScenario) => {
+    const allUsers = await users()
+    expect(allUsers.length).toEqual(Object.keys(scenario.user).length)
   })
 
-  scenario('returns a single user', async (scenario: StandardScenario) => {
-    const result = await user({ id: scenario.user.one.id })
-
-    expect(result).toEqual(scenario.user.one)
+  scenario('Returns a specific user', async (scenario: StandardScenario) => {
+    const specificUser = await user({ id: scenario.user.one.id })
+    expect(specificUser).toEqual(scenario.user.one)
   })
 
-  scenario('creates a user', async (scenario: StandardScenario) => {
-    const result = await createUser({
+  scenario('Creates a new user', async (scenario: StandardScenario) => {
+    const newUser = await createUser({
       input: {
-        username: 'String1936213',
-        email: 'String8852242',
-        hashedPassword: 'String',
-        salt: 'String',
+        username: 'NewUser',
+        email: 'newuser@example.com',
+        hashedPassword: 'hashedpassword',
+        salt: 'salt',
         userSettingId: scenario.user.two.userSettingId,
-        updatedAt: '2022-07-05T23:43:34Z',
+        updatedAt: '2023-06-17T00:00:00Z',
       },
     })
 
-    expect(result.username).toEqual('String1936213')
-    expect(result.email).toEqual('String8852242')
-    expect(result.hashedPassword).toEqual('String')
-    expect(result.salt).toEqual('String')
-    expect(result.userSettingId).toEqual(scenario.user.two.userSettingId)
-    expect(result.updatedAt).toEqual('2022-07-05T23:43:34Z')
+    expect(newUser).toEqual({
+      username: 'NewUser',
+      email: 'newuser@example.com',
+      hashedPassword: 'hashedpassword',
+      salt: 'salt',
+      userSettingId: scenario.user.two.userSettingId,
+      updatedAt: '2023-06-17T00:00:00Z',
+    })
   })
 
-  scenario('updates a user', async (scenario: StandardScenario) => {
-    const original = await user({ id: scenario.user.one.id })
-    const result = await updateUser({
-      id: original.id,
-      input: { username: 'String88251422' },
+  scenario('Updates an existing user', async (scenario: StandardScenario) => {
+    const originalUser = await user({ id: scenario.user.one.id })
+    const updatedUser = await updateUser({
+      id: originalUser.id,
+      input: { username: 'UpdatedUsername', email: 'updatedemail@example.com' },
     })
 
-    expect(result.username).toEqual('String88251422')
+    expect(updatedUser.username).toEqual('UpdatedUsername')
+    expect(updatedUser.email).toEqual('updatedemail@example.com')
   })
 
-  scenario('deletes a user', async (scenario: StandardScenario) => {
-    const original = await deleteUser({ id: scenario.user.one.id })
-    const result = await user({ id: original.id })
+  scenario('Deletes a user', async (scenario: StandardScenario) => {
+    const deletedUser = await deleteUser({ id: scenario.user.one.id })
+    const result = await user({ id: deletedUser.id })
 
-    expect(result).toEqual(null)
+    expect(result).toBeNull()
   })
 })

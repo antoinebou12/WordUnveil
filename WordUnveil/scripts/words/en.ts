@@ -5,8 +5,8 @@ import { WordsEN } from '../data/en';
 const languageCode = 'en';
 
 export async function addWords(db: PrismaClient, logger: Logger) {
-    for (const word of WordsEN) {
-        await db.word.upsert({
+    const promises = WordsEN.map((word) =>
+        db.word.upsert({
             where: {
                 word: word,
             },
@@ -30,19 +30,9 @@ export async function addWords(db: PrismaClient, logger: Logger) {
                 }
             }
         })
-        logger.debug(`Added word ${word}`)
-        // const defintion = await getDefinition(languageCode, word)
-        // if (defintion) {
-        //     db.word.update({
-        //         where: {
-        //             word: word,
-        //         },
-        //         data: {
-        //             definition: defintion.definition,
-        //             source: defintion.source,
-        //         }
-        //     })
-        //     logger.debug(`Updated word ${word}`)
-        // }
-    }
+        .then(() => logger.debug(`Added word ${word}`))
+        .catch((error) => logger.error(`Failed to add word ${word}`, error))
+    );
+
+    await Promise.all(promises);
 }

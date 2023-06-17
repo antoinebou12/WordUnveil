@@ -1,23 +1,21 @@
 import { PrismaClient } from '@prisma/client';
 import { Logger } from 'pino';
 
-const languageCode = 'es'
+export async function addWordBank(prisma: PrismaClient, logger: Logger) {
+    const languageCode = 'es';
 
-export async function addWordBank(db: PrismaClient, logger: Logger) {
-    await db.wordBank.upsert(
-        {
-            where: {
-                name: languageCode,
-            },
+    try {
+        await prisma.wordBank.upsert({
+            where: { name: languageCode },
             update: {},
             create: {
                 name: languageCode,
-                Language: {
-                    connect: {
-                        code: languageCode,
-                    },
-                },
+                Language: { connect: { code: languageCode } },
             }
         });
-    logger.debug('Added word bank')
+
+        logger.debug(`Added or updated word bank for language: ${languageCode}`);
+    } catch (error) {
+        logger.error(`Failed to add or update word bank for language: ${languageCode}`, { error });
+    }
 }

@@ -4,24 +4,24 @@ export const standard = defineScenario<Prisma.UserSettingCreateArgs>({
   userSetting: {
     one: {
       data: {
-        updatedAt: '2022-07-05T23:40:22Z',
+        updatedAt: new Date('2022-07-05T23:40:22Z'),
         Language: {
           create: {
-            name: 'String',
-            code: 'String7064109',
-            updatedAt: '2022-07-05T23:40:22Z',
+            name: 'English',
+            code: 'EN',
+            updatedAt: new Date('2022-07-05T23:40:22Z'),
           },
         },
       },
     },
     two: {
       data: {
-        updatedAt: '2022-07-05T23:40:22Z',
+        updatedAt: new Date('2022-07-05T23:40:22Z'),
         Language: {
           create: {
-            name: 'String',
-            code: 'String3468039',
-            updatedAt: '2022-07-05T23:40:22Z',
+            name: 'Spanish',
+            code: 'ES',
+            updatedAt: new Date('2022-07-05T23:40:22Z'),
           },
         },
       },

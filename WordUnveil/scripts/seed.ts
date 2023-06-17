@@ -1,21 +1,31 @@
-import { db } from 'api/src/lib/db'
-import { logger } from 'api/src/lib/logger'
+import { db } from 'api/src/lib/db';
+import { logger } from 'api/src/lib/logger';
 
-import addUsers from 'users'
-import addLanguages from './languages'
-import addWordBanks from './wordBanks'
-import addWords from './words'
+import addUsers from 'users';
+import addLanguages from './languages';
+import addWordBanks from './wordBanks';
+import addWords from './words';
 
-export default async function main() {
+async function executeDatabaseTask(task, ...params) {
   try {
-    await addLanguages(db, logger);
-    await addUsers(db, logger);
-    await addWordBanks(db, logger);
-    await addWords(db, logger);
+    await task(...params);
+    logger.info(`${task.name} completed successfully.`);
   } catch (err) {
-    logger.error(err)
-    db.$disconnect()
-    process.exit(1)
+    logger.error(`${task.name} failed with error: `, err);
+    throw err;
   }
 }
 
+export default async function main() {
+  try {
+    await executeDatabaseTask(addLanguages, db, logger);
+    await executeDatabaseTask(addUsers, db, logger);
+    await executeDatabaseTask(addWordBanks, db, logger);
+    await executeDatabaseTask(addWords, db, logger);
+    logger.info('All tasks completed successfully.');
+  } catch (err) {
+    logger.error('An error occurred during database setup: ', err);
+    db.$disconnect();
+    process.exit(1);
+  }
+}

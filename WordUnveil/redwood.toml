@@ -1,16 +1,25 @@
-# This file contains the configuration settings for your Redwood app.
-# This file is also what makes your Redwood app a Redwood app.
-# If you remove it and try to run `yarn rw dev`, you'll get an error.
-#
+# This is the RedwoodJS configuration file. This file is what makes your project
+# a RedwoodJS app. If you remove it and try to run `yarn rw dev`, you'll get an error.
 # For the full list of options, see the "App Configuration: redwood.toml" doc:
 # https://redwoodjs.com/docs/app-configuration-redwood-toml
 
 [web]
-  title = "Redwood App"
+  # The title of your web application
+  title = "WordsEnigma"
+  # The port on which your web side of the app will run
   port = 8910
-  apiUrl = "/.redwood/functions" # you can customise graphql and dbauth urls individually too: see https://redwoodjs.com/docs/app-configuration-redwood-toml#api-paths
-  includeEnvironmentVariables = [] # any ENV vars that should be available to the web side, see https://redwoodjs.com/docs/environment-variables#web
+  # The URL path for your API. 
+  apiUrl = "/.redwood/functions" 
+  # You can customize graphql and dbauth URLs individually too.
+  # See https://redwoodjs.com/docs/app-configuration-redwood-toml#api-paths
+  # A list of any ENV vars that should be available to the web side. 
+  # See https://redwoodjs.com/docs/environment-variables#web
+  includeEnvironmentVariables = [] 
+
 [api]
+  # The port on which your API side of the app will run
   port = 8911
+
 [browser]
+  # Configures whether to automatically open a web browser when the server starts.
   open = true

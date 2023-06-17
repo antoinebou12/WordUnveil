@@ -1,4 +1,7 @@
 {
+  "name": "words-enigma",
+  "version": "1.0.0",
+  "description": "A multilingual variant of the popular game Wordle",
   "private": true,
   "workspaces": {
     "packages": [
@@ -7,14 +10,14 @@
       "packages/*"
     ]
   },
-  "devDependencies": {
-    "@getbigger-io/prisma-fixtures-cli": "^1.0.10",
-    "@redwoodjs/core": "1.5.2",
-    "node-ssh": "^13.0.0"
-  },
-  "eslintConfig": {
-    "extends": "@redwoodjs/eslint-config",
-    "root": true
+  "scripts": {
+    "start": "rw up",
+    "dev": "rw dev",
+    "test": "rw test",
+    "lint": "rw lint",
+    "db:up": "rw prisma migrate dev",
+    "db:save": "rw prisma migrate save",
+    "db:seed": "yarn rw exec seed"
   },
   "engines": {
     "node": ">=14.19 <=16.x",
@@ -25,10 +28,27 @@
     "seed": "yarn rw exec seed"
   },
   "packageManager": "yarn@3.2.1",
+  "devDependencies": {
+    "@getbigger-io/prisma-fixtures-cli": "^1.0.10",
+    "@redwoodjs/core": "1.5.2",
+    "node-ssh": "^13.0.0"
+  },
   "dependencies": {
     "axios": "^0.27.2",
     "cheerio": "^1.0.0-rc.12",
     "graphql-request": "^4.3.0",
     "react-query-class-component": "^1.0.4"
-  }
+  },
+  "eslintConfig": {
+    "extends": "@redwoodjs/eslint-config",
+    "root": true
+  },
+  "keywords": [
+    "wordle",
+    "multilingual",
+    "game",
+    "education"
+  ],
+  "author": "Antoine Boucher<antoine.boucher012@gmail.com>",
+  "license": "MIT"
 }

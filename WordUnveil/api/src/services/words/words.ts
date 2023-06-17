@@ -5,35 +5,40 @@ import type {
   WordResolvers,
 } from 'types/graphql'
 
+// Error handling for word not found
+async function findWordOrFail(id) {
+  const word = await db.word.findUnique({ where: { id } })
+  if (!word) {
+    throw new Error(`Word with ID ${id} does not exist`)
+  }
+  return word
+}
+
 export const words: QueryResolvers['words'] = () => {
   return db.word.findMany()
 }
 
-export const word: QueryResolvers['word'] = ({ id }) => {
-  return db.word.findUnique({
-    where: { id },
-  })
+export const word: QueryResolvers['word'] = async ({ id }) => {
+  return await findWordOrFail(id)
 }
 
 export const findWord: QueryResolvers['findWord'] = ({ word }) => {
   return db.word.findUnique({
-    where: { 
+    where: {
       word: word
-     },
+    },
   })
 }
 
 export const findWordByWordBankName: QueryResolvers['findWordByWordBankName'] = ({ name }) => {
   return db.word.findMany({
-    where: { 
+    where: {
       WordBank: {
         name: name
       }
     },
   })
-
 }
-
 
 export const createWord: MutationResolvers['createWord'] = ({ input }) => {
   return db.word.create({
@@ -41,14 +46,16 @@ export const createWord: MutationResolvers['createWord'] = ({ input }) => {
   })
 }
 
-export const updateWord: MutationResolvers['updateWord'] = ({ id, input }) => {
+export const updateWord: MutationResolvers['updateWord'] = async ({ id, input }) => {
+  await findWordOrFail(id)
   return db.word.update({
     data: input,
     where: { id },
   })
 }
 
-export const deleteWord: MutationResolvers['deleteWord'] = ({ id }) => {
+export const deleteWord: MutationResolvers['deleteWord'] = async ({ id }) => {
+  await findWordOrFail(id)
   return db.word.delete({
     where: { id },
   })

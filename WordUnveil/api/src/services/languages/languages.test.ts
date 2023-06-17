@@ -18,36 +18,50 @@ describe('languages', () => {
     const result = await languages()
 
     expect(result.length).toEqual(Object.keys(scenario.language).length)
+    result.forEach(language => {
+      expect(typeof language.name).toBe('string')
+      expect(typeof language.code).toBe('string')
+    })
   })
 
   scenario('returns a single language', async (scenario: StandardScenario) => {
     const result = await language({ id: scenario.language.one.id })
 
     expect(result).toEqual(scenario.language.one)
+    expect(typeof result.name).toBe('string')
+    expect(typeof result.code).toBe('string')
   })
 
   scenario('creates a language', async () => {
     const result = await createLanguage({
       input: {
-        name: 'String',
-        code: 'String9523426',
+        name: 'Test',
+        code: 'TestCode',
         updatedAt: '2022-07-05T23:40:41Z',
       },
     })
 
-    expect(result.name).toEqual('String')
-    expect(result.code).toEqual('String9523426')
+    expect(result.name).toEqual('Test')
+    expect(result.code).toEqual('TestCode')
     expect(result.updatedAt).toEqual('2022-07-05T23:40:41Z')
+  })
+
+  scenario('throws error when creating a language with invalid input', async () => {
+    await expect(createLanguage({ input: { name: '' } })).rejects.toThrow()
   })
 
   scenario('updates a language', async (scenario: StandardScenario) => {
     const original = await language({ id: scenario.language.one.id })
     const result = await updateLanguage({
       id: original.id,
-      input: { name: 'String2' },
+      input: { name: 'UpdatedName' },
     })
 
-    expect(result.name).toEqual('String2')
+    expect(result.name).toEqual('UpdatedName')
+  })
+
+  scenario('throws error when updating a language that does not exist', async () => {
+    await expect(updateLanguage({ id: 'nonexistent', input: { name: 'UpdatedName' } })).rejects.toThrow()
   })
 
   scenario('deletes a language', async (scenario: StandardScenario) => {
@@ -55,5 +69,9 @@ describe('languages', () => {
     const result = await language({ id: original.id })
 
     expect(result).toEqual(null)
+  })
+
+  scenario('throws error when deleting a language that does not exist', async () => {
+    await expect(deleteLanguage({ id: 'nonexistent' })).rejects.toThrow()
   })
 })

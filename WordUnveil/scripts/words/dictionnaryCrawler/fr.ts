@@ -1,103 +1,77 @@
 import axios, { AxiosResponse } from 'axios'
-import https from 'https';
 import * as cheerio from 'cheerio';
+import https from 'https';
 
-export const urlLeDictionnaire = "https://www.le-dictionnaire.com/definition/";
-export const urlWiktionary = "https://fr.wiktionary.org/wiki/";
+const urlLeDictionnaire = "https://www.le-dictionnaire.com/definition/";
+const urlWiktionary = "https://fr.wiktionary.org/wiki/";
 
-async function fetchData(url: string): Promise<any> {
-    // make http call to url
-    let response: void | AxiosResponse<any, any> = await axios(url, { timeout: 50000, httpsAgent: new https.Agent({ keepAlive: true }) }).catch((err) => console.log("Error occurred while fetching data " + url));
-    if (response) {
-        // console.log(`${url} fetched`);
-        let status: number = response?.status;
-        if (status !== 200) {
-            console.log("Error occurred while fetching data: " + url);
-            return;
+interface DefinitionResult {
+    definition: string | null,
+    source: string | null
+}
+
+async function fetchData(url: string): Promise<AxiosResponse<any>> {
+    try {
+        const response = await axios.get(url, {
+            timeout: 50000,
+            httpsAgent: new https.Agent({ keepAlive: true })
+        });
+
+        if (response.status !== 200) {
+            throw new Error(`Non-OK status: ${response.status}`);
         }
-    } else {
-        console.log("Error occurred while fetching data " + url);
+        return response;
+    } catch (error) {
+        console.error(`Error occurred while fetching data ${url}: ${error}`);
+        return null;
+    }
+}
+
+async function getDefitionFromWiktionary(word: string): Promise<string> {
+    const response = await fetchData(urlWiktionary + word);
+
+    if (!response) {
+      return;
+    }
+
+    const $ = cheerio.load(response.data);
+    const list_def = $('#mw-content-text > div.mw-parser-output > ol');
+    let definition = "";
+
+    list_def.each((_, element) => {
+        definition += $(element).text().replace(/\s+/g, ' ');
+    });
+
+    return definition;
+}
+
+export async function getDefinitionFromLeDictionnaire(word: string): Promise<DefinitionResult> {
+    const response = await fetchData(urlLeDictionnaire + word);
+
+    if (!response) {
         return;
     }
-    return response;
+
+    const $ = cheerio.load(response.data);
+    const definition = $('#definition').text().replace(/\s+/g, ' ');
+
+    return {
+        definition: definition,
+        source: urlLeDictionnaire + word
+    };
 }
 
-async function getDefitionFromWiktionary(word: String): Promise<string> {
-    return await fetchData(urlWiktionary + word).then((res) => {
-        if (res) {
-            let data = res.data;
-            if (data) {
-                const $ = cheerio.load(data);
-                const list_def = $('#mw-content-text > div.mw-parser-output > ol');
-                let definition: string = ""
-                for (let i = 0; i < list_def.length; i++) {
-                    const def_li_text = $(list_def[i]).text().replace(/\s+/g, ' ');
-                    definition += def_li_text;
-                }
-                return definition;
-            } else {
-                console.log("Error occurred while fetching data " + word);
-                return;
-            }
-        } else {
-            console.log("Error occurred while fetching data " + word);
-        }
-    });
-}
+export async function getDefinition(word: string): Promise<DefinitionResult> {
+    const leDictionnaireResult = await getDefinitionFromLeDictionnaire(word);
 
-async function getDefinitionFromLeDictionnaire(word: String): Promise<any> {
-    return await fetchData(urlLeDictionnaire + word).then((res) => {
-        if (res) {
-            let data = res.data;
-            if (data) {
-                const $ = cheerio.load(data);
-                const maincontent = $('#maincontent');
-                const defbox = maincontent.find('div.defbox');
-                let definition: string = ""
-                for (let i = 0; i < defbox.length; i++) {
-                    const def_ul = defbox.find('div.motboxinfo + ul');
-                    for (let i = 0; i < def_ul.length; i++) {
-                        const def_li_text = $(def_ul[i]).text().replace(/\s+/g, ' ');
-                        definition += def_li_text;
-                    }
-                }
-                return {
-                    definition: definition,
-                    source: urlLeDictionnaire + word
-                };
-            } else {
-                console.log("Error occurred while fetching data " + word);
-                return { definition: null, source: null };
-            }
-        } else {
-            console.log("Error occurred while fetching data " + word);
-        }
-    })
-}
+    if (leDictionnaireResult) {
+        return leDictionnaireResult;
+    }
 
+    const wiktionaryResult = await getDefitionFromWiktionary(word);
 
-export async function getDefinition(word: String): Promise<any> {
-    return await getDefinitionFromLeDictionnaire(word).then((res) => {
-        if (res) {
-            return {
-                definition: res,
-                source: urlWiktionary + word
-            };
-        } else {
-            return getDefitionFromWiktionary(word).then((res) => {
-                if (res) {
-                    return {
-                        definiton: res,
-                        source: urlWiktionary + word
-                    };
-                } else {
-                    return {
-                        definition: null,
-                        source:  null
-                    };
-                }
-            });
-        }
-    });
-
+    return {
+        definition: wiktionaryResult,
+        source: urlWiktionary + word
+    };
 }

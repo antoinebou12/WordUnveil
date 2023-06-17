@@ -5,21 +5,28 @@ import type {
   WordBankResolvers,
 } from 'types/graphql'
 
+// Error handling for WordBank not found
+async function findWordBankOrFail(id) {
+  const wordBank = await db.wordBank.findUnique({ where: { id } })
+  if (!wordBank) {
+    throw new Error(`WordBank with ID ${id} does not exist`)
+  }
+  return wordBank
+}
+
 export const wordBanks: QueryResolvers['wordBanks'] = () => {
   return db.wordBank.findMany()
 }
 
-export const wordBank: QueryResolvers['wordBank'] = ({ id }) => {
-  return db.wordBank.findUnique({
-    where: { id },
-  })
+export const wordBank: QueryResolvers['wordBank'] = async ({ id }) => {
+  return await findWordBankOrFail(id)
 }
 
 export const findWordBankbyName: QueryResolvers['findWordBankByName'] = ({ name }) => {
   return db.wordBank.findUnique({
-    where: { 
+    where: {
       name: name
-     },
+    },
   })
 }
 
@@ -31,17 +38,19 @@ export const createWordBank: MutationResolvers['createWordBank'] = ({
   })
 }
 
-export const updateWordBank: MutationResolvers['updateWordBank'] = ({
+export const updateWordBank: MutationResolvers['updateWordBank'] = async ({
   id,
   input,
 }) => {
+  await findWordBankOrFail(id)
   return db.wordBank.update({
     data: input,
     where: { id },
   })
 }
 
-export const deleteWordBank: MutationResolvers['deleteWordBank'] = ({ id }) => {
+export const deleteWordBank: MutationResolvers['deleteWordBank'] = async ({ id }) => {
+  await findWordBankOrFail(id)
   return db.wordBank.delete({
     where: { id },
   })

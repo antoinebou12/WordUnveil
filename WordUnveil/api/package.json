@@ -1,8 +1,24 @@
 {
-  "name": "api",
-  "version": "0.0.0",
+  "name": "words-enigma-api",
+  "version": "1.0.0",
+  "description": "API service for the multilingual WordsEnigma game",
+  "main": "index.js",
   "private": true,
+  "scripts": {
+    "start": "rw serve api",
+    "dev": "rw dev",
+    "build": "rw build",
+    "test": "rw test api"
+  },
+  "keywords": [
+    "words-enigma",
+    "redwoodjs",
+    "api"
+  ],
+  "author": "Your Name <youremail@example.com>",
+  "license": "MIT",
   "dependencies": {
+    "@prisma/client": "^3.14.0",
     "@redwoodjs/api": "^2.1.0",
     "@redwoodjs/graphql-server": "^2.1.0"
   },
