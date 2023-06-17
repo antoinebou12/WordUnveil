@@ -1,5 +1,5 @@
 import { Link, navigate, routes } from '@redwoodjs/router'
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import {
   Form,
   Label,
@@ -11,10 +11,10 @@ import {
 import { useAuth } from '@redwoodjs/auth'
 import { MetaTags } from '@redwoodjs/web'
 import { toast, Toaster } from '@redwoodjs/web/toast'
-import { useEffect } from 'react'
 
 const LoginPage = () => {
   const { isAuthenticated, logIn } = useAuth()
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -27,16 +27,39 @@ const LoginPage = () => {
     usernameRef.current.focus()
   }, [])
 
-  const onSubmit = async (data) => {
-    console.log(data);
-    const response = await logIn({ ...data })
+  const InputField = ({ name, label, type = 'text', ...rest }) => (
+    <>
+      <Label name={name} className="rw-label" errorClassName="rw-label rw-label-error">
+        {label}
+      </Label>
+      {(type === 'text') ? (
+        <TextField
+          name={name}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+          {...rest}
+        />
+      ) : (
+        <PasswordField
+          name={name}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+          {...rest}
+        />
+      )}
+      <FieldError name={name} className="rw-field-error" />
+    </>
+  )
 
-    if (response.message) {
-      toast(response.message)
-    } else if (response.error) {
-      toast.error(response.error)
-    } else {
+  const onSubmit = async (data) => {
+    setLoading(true)
+    try {
+      await logIn({ ...data })
       toast.success('Welcome back!')
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -55,17 +78,9 @@ const LoginPage = () => {
             <div className="rw-segment-main">
               <div className="rw-form-wrapper">
                 <Form onSubmit={onSubmit} className="rw-form-wrapper">
-                  <Label
+                  <InputField
                     name="username"
-                    className="rw-label"
-                    errorClassName="rw-label rw-label-error"
-                  >
-                    Username
-                  </Label>
-                  <TextField
-                    name="username"
-                    className="rw-input"
-                    errorClassName="rw-input rw-input-error"
+                    label="Username"
                     ref={usernameRef}
                     validation={{
                       required: {
@@ -75,19 +90,10 @@ const LoginPage = () => {
                     }}
                   />
 
-                  <FieldError name="username" className="rw-field-error" />
-
-                  <Label
+                  <InputField
                     name="password"
-                    className="rw-label"
-                    errorClassName="rw-label rw-label-error"
-                  >
-                    Password
-                  </Label>
-                  <PasswordField
-                    name="password"
-                    className="rw-input"
-                    errorClassName="rw-input rw-input-error"
+                    label="Password"
+                    type="password"
                     autoComplete="current-password"
                     validation={{
                       required: {
@@ -103,10 +109,10 @@ const LoginPage = () => {
                     </Link>
                   </div>
 
-                  <FieldError name="password" className="rw-field-error" />
-
                   <div className="rw-button-group">
-                    <Submit className="rw-button rw-button-blue">Login</Submit>
+                    <Submit disabled={loading} className="rw-button rw-button-blue">
+                      {loading ? 'Loading...' : 'Login'}
+                    </Submit>
                   </div>
                 </Form>
               </div>

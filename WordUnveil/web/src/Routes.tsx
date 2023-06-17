@@ -34,7 +34,6 @@ import ForgotPasswordPage from './pages/Logins/ForgotPasswordPage/ForgotPassword
 import LoginPage from './pages/Logins/LoginPage/LoginPage'
 import ResetPasswordPage from './pages/Logins/ResetPasswordPage/ResetPasswordPage'
 import SignupPage from './pages/Logins/SignupPage/SignupPage'
-import MotduJourPage from './pages/Wordle/MotduJourPage/MotduJourPage'
 import WordOfTheDayPage from './pages/Wordle/WordOfTheDayPage/WordOfTheDayPage'
 import TryRowsPage from './pages/Admins/TryRow/TryRowsPage/TryRowsPage'
 import EditGamePage from './pages/Admins/Game/EditGamePage/EditGamePage'
@@ -61,7 +60,8 @@ import EditWordBankPage from './pages/Admins/WordBank/EditWordBankPage/EditWordB
 import NewWordBankPage from './pages/Admins/WordBank/NewWordBankPage/NewWordBankPage'
 import WordBankPage from './pages/Admins/WordBank/WordBankPage/WordBankPage'
 import WordBanksPage from './pages/Admins/WordBank/WordBanksPage/WordBanksPage'
-import PalabraDelDiaPage from './pages/Wordle/PalabraDelDiaPage/PalabraDelDiaPage'
+import NotFoundPage from './pages/NotFoundPage/NotFoundPage'
+import HomePage from './pages/HomePage/HomePage'
 
 const Routes = () => {
   return (
@@ -131,9 +131,7 @@ const Routes = () => {
       <Route path="/forgot-password" page={ForgotPasswordPage} name="forgotPassword" />
       <Route path="/reset-password" page={ResetPasswordPage} name="resetPassword" />
       <Route path="/" page={HomePage} name="home" />
-      <Route path="/motdujour" page={MotduJourPage} name="motDuJour" />
-      <Route path="/wordoftheday" page={WordOfTheDayPage} name="wordOfTheDay" />
-      <Route path="/palabradeldia" page={PalabraDelDiaPage} name="palabraDelDia" />
+      <Route path="/wordoftheday/{lang}" page={WordOfTheDayPage} name="wordOfTheDay" />
       <Route notfound page={NotFoundPage} />
 
     </Router>

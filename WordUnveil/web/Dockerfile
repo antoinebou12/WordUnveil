@@ -1,29 +1,36 @@
+# --- Build stage ---
 FROM node:16-alpine as builder
-
-# # Node
-# ARG NODE_ENV
-# ARG RUNTIME_ENV
-# ENV NODE_ENV=$NODE_ENV
-# ENV RUNTIME_ENV=$RUNTIME_ENV
 
 WORKDIR /app
 
+# Copy package.json and yarn.lock files
+COPY package.json yarn.lock ./
+
+# Install dependencies
+RUN yarn install
+
+# Copy other files
 COPY web web
 COPY .nvmrc .
 COPY graphql.config.js .
-COPY package.json .
 COPY redwood.toml .
-COPY yarn.lock .
 
-RUN yarn install
+# Build the project
 RUN yarn rw build web
 RUN rm -rf ./web/src
 
+# --- Run stage ---
 FROM nginx as runner
 
+# Copy files from build stage
 COPY --from=builder /app/web/dist /usr/share/nginx/html
 COPY web/nginx.conf /etc/nginx/conf.d/default.conf
 
+# Debug: list files
 RUN ls -lA /usr/share/nginx/html
 
+# Default command
+CMD ["nginx", "-g", "daemon off;"]
+
+# Expose port
 EXPOSE 8910

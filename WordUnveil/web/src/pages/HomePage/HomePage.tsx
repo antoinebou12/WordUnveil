@@ -7,7 +7,7 @@ const HomePage = () => {
   return (
     <>
     <MetaTags title="Home" description="Home page" />
-    
+    <h1>WordUnveil</h1>
     {isAuthenticated ? (
             <div>
               <span>Logged in as {currentUser.roles}</span>{' '}

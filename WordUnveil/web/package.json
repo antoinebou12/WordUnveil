@@ -1,6 +1,10 @@
 {
   "name": "web",
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "A RedwoodJS web application.",
+  "keywords": ["redwood", "web", "react"],
+  "author": "Antoine Boucher <antoine.boucher012@gmail.com>",
+  "license": "MIT",
   "private": true,
   "browserslist": {
     "development": [
@@ -11,6 +15,11 @@
       "not IE 11",
       "not IE_Mob 11"
     ]
+  },
+  "scripts": {
+    "start": "redwood dev",
+    "build": "redwood build",
+    "test": "redwood test"
   },
   "dependencies": {
     "@redwoodjs/auth": "^2.1.0",
@@ -23,5 +32,8 @@
   },
   "devDependencies": {
     "yarn-upgrade-all": "^0.7.1"
+  },
+  "peerDependencies": {
+    "node": ">=14.0.0"
   }
 }

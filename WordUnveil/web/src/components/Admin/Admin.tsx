@@ -1,37 +1,42 @@
 import { Link, routes } from "@redwoodjs/router"
 
+const AdminLinkRow = ({id, route, label}) => (
+  <tr key={id}>
+    <td>
+      <Link to={route}>{label}</Link>
+    </td>
+    <td>
+      <nav className="rw-table-actions">
+        <Link className="rw-button rw-button-small" to={`${route}/new`}>New {label}</Link>
+      </nav>
+    </td>
+  </tr>
+);
+
 const Admin = () => {
-  const LinkList = [
-    { id: 0, lists: <Link className="" to={routes.users()}>Users</Link>, new: <Link className="rw-button rw-button-small" to={routes.newUser()}>New User</Link> },
-    { id: 1, lists: <Link className="" to={routes.userSettings()}>User Settings</Link>, new: <Link className="rw-button rw-button-small" to={routes.newUserSetting()}>New User Setting</Link> },
-    { id: 2, lists: <Link className="" to={routes.languages()}>Languages</Link>, new: <Link className="rw-button rw-button-small" to={routes.newLanguage()}>New Language</Link> },
-    { id: 3, lists: <Link className="" to={routes.words()}>Words</Link>, new: <Link className="rw-button rw-button-small" to={routes.newWord()}>New Word</Link> },
-    { id: 4, lists: <Link className="" to={routes.wordBanks()}>Word Banks</Link>, new: <Link className="rw-button rw-button-small" to={routes.newWordBank()}>New Word Bank</Link> },
-    { id: 5, lists: <Link className="" to={routes.letters()}>Letters</Link>, new: <Link className="rw-button rw-button-small" to={routes.newLetter()}>New Letter</Link> },
-    { id: 6, lists: <Link className="" to={routes.games()}>Games</Link>, new: <Link className="rw-button rw-button-small" to={routes.newGame()}>New Game</Link> },
-    { id: 7, lists: <Link className="" to={routes.statistics()}>Statistics</Link>, new: <Link className="rw-button rw-button-small" to={routes.newStatistic()}>New Statistic</Link> },
-    { id: 8, lists: <Link className="" to={routes.tryRows()}>Try Rows</Link>, new: <Link className="rw-button rw-button-small" to={routes.newTryRow()}>New Try Row</Link> },
-  ]
+  const links = [
+    { id: 0, route: routes.users, label: "Users" },
+    { id: 1, route: routes.userSettings, label: "User Settings" },
+    { id: 2, route: routes.languages, label: "Languages" },
+    { id: 3, route: routes.words, label: "Words" },
+    { id: 4, route: routes.wordBanks, label: "Word Banks" },
+    { id: 5, route: routes.letters, label: "Letters" },
+    { id: 6, route: routes.games, label: "Games" },
+    { id: 7, route: routes.statistics, label: "Statistics" },
+    { id: 8, route: routes.tryRows, label: "Try Rows" },
+  ];
 
   return (
     <div className="rw-segment rw-table-wrapper-responsive">
       <table className="rw-table">
         <thead>
-          {LinkList.map((link) => (
-            <tr key={link.id}>
-              <th>{link.lists}</th>
-              <th>
-                <nav className="rw-table-actions">
-                  {link.new}
-                </nav>
-              </th>
-            </tr>
+          {links.map((link) => (
+            <AdminLinkRow key={link.id} route={link.route} label={link.label} id={undefined} />
           ))}
         </thead>
       </table>
-
     </div>
   )
 }
 
-export default Admin
+export default Admin;
