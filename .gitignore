@@ -78,3 +78,5 @@ api/dist
 
 # ignore Redwood's generated types for Prisma
 api/types/
+
+*/data/mariadb
