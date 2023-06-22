@@ -50,7 +50,7 @@ services:
 
   # Service for Grafana - a multi-platform open-source analytics and interactive visualization web application
   grafana:
-    image: grafana/grafana:8.1.5
+    image: grafana/grafana:8.5.27
     volumes:
       - grafana-storage:/var/lib/grafana
     ports:
