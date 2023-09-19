@@ -20,7 +20,7 @@
     "db:seed": "yarn rw exec seed"
   },
   "engines": {
-    "node": ">=14.19 <=16.x",
+    "node": ">=14.19 <=18.18",
     "yarn": ">=1.15"
   },
   "prisma": {
