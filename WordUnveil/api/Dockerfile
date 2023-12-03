@@ -1,5 +1,5 @@
 # Use a specific version of node for consistency across environments
-FROM node:16-alpine
+FROM node:20-alpine
 
 # Set the working directory in the Docker container
 WORKDIR /app
