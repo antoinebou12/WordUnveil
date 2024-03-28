@@ -39,7 +39,7 @@ services:
 
   # Service for Prometheus - an open-source systems monitoring and alerting toolkit
   prometheus:
-    image: prom/prometheus:v2.29.1
+    image: prom/prometheus:v2.51.1
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     command:
